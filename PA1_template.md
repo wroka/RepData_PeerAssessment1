@@ -1,11 +1,6 @@
----
-title: "Reproducible Research - Assignment 1"
-author: "Bill Roka"
-date: "May 6, 2016"
-output: 
-  html_document: 
-    keep_md: yes
----
+# Reproducible Research - Assignment 1
+Bill Roka  
+May 6, 2016  
 
 
 
@@ -14,7 +9,8 @@ output:
 
 Load necessary libraries for analysis (install packages if necessary).
 
-```{r, echo=TRUE, warning=FALSE, message=FALSE}
+
+```r
 library(dplyr)
 library(ggplot2)
 library(knitr)
@@ -24,7 +20,8 @@ library(gridExtra)
 
 Unzip and Load data. Unzip files to working folder. The date field is transformed to date format using the "colClasses" syntax.
 
-```{r, echo=TRUE, warning=FALSE, message=FALSE}
+
+```r
 unzip(zipfile="./activity.zip")
 activity <- read.csv("activity.csv", header = TRUE, colClasses = c("numeric", "Date", "numeric"))
 ```
@@ -39,7 +36,8 @@ For this part of the assignment, you can ignore the missing values in the datase
 
   Note: Per instructions, nulls are ignored for this calculation (they are not part of the calculation of the denominator).
 
-```{r, echo=TRUE, warning=FALSE}
+
+```r
 # First, calculate total steps per day, ignoring nulls (removes them from the denominator)
 steps_per_day <- activity %>% 
                   group_by(date) %>% 
@@ -52,19 +50,30 @@ qplot(Steps,
                     xlab = "Total Steps",
                     binwidth = 1000,
                     fill = I("red"))
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
 
 2) Calculate and report the mean and median total number of steps taken per day.
 
-```{r, echo=TRUE, warning=FALSE}
+
+```r
 # The mean
 mean(steps_per_day$Steps, na.rm = TRUE)
+```
 
+```
+## [1] 10766.19
+```
+
+```r
 # The median
 median(steps_per_day$Steps, na.rm = TRUE)
+```
 
+```
+## [1] 10765
 ```
 
   
@@ -75,7 +84,8 @@ median(steps_per_day$Steps, na.rm = TRUE)
  
 1) Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-```{r, echo=TRUE, warning=FALSE}
+
+```r
 ##Find average steps for all days
 
 avg_steps_by_interval <- activity %>% 
@@ -90,15 +100,25 @@ ggplot(avg_steps_by_interval, aes(interval, avg_steps)) +
         ggtitle("Average Daily Activity Pattern - Steps Across All Days")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
 
 
 2) Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 
-```{r, echo=TRUE, warning=FALSE}
+
+```r
 ## find the interval value with the max number of steps, on average across all days
 avg_steps_by_interval[which.max(avg_steps_by_interval$avg_steps),1]
+```
 
+```
+## Source: local data frame [1 x 1]
+## 
+##   interval
+##      (dbl)
+## 1      835
 ```
 
   <span style="color:Indigo;font-weight:bold">Interval 835 contains the maximum number of steps.</span>
@@ -110,8 +130,13 @@ Note that there are a number of days/intervals where there are missing values (c
  
 1) Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 
-```{r, echo=TRUE, warning=FALSE}
+
+```r
 sum(!complete.cases(activity)) # 2,304 total rows with null values
+```
+
+```
+## [1] 2304
 ```
 
   <span style="color:Indigo;font-weight:bold">There are 2,304 total rows with null values.</span>
@@ -121,30 +146,31 @@ sum(!complete.cases(activity)) # 2,304 total rows with null values
   <span style="color:Indigo;font-weight:bold">My chosen strategy for replacing nulls is to use the MEAN of the 5-minute interval:</span>
 
 
-```{r, echo=TRUE, warning=FALSE}
+
+```r
 ## impute NA with INTERVAL AVERAGE
 impute.mean <- function(x) replace(x, is.na(x), mean(x, na.rm = TRUE))
-
 ```
 
 
 3) Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
-```{r, echo=TRUE, warning=FALSE}
+
+```r
 ## Set steps to mean of steps, grouped on interval. Build new version of the table as "activity_replace_nulls".
 activity_replace_nulls <- activity %>%
                             group_by(interval) %>%
                               mutate(
                                 steps = impute.mean(steps) 
                               )
-
 ```
  
 4) Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day.
 
   *Note: for the purpose of comparison, I'm displaying both the original graph and the new version with imputed NAs side-by-side.* 
    
-```{r, echo=TRUE, warning=FALSE}
+
+```r
 steps_per_day_rn <- activity_replace_nulls %>% 
                     group_by(date) %>%
                     summarise(Steps = sum(steps))
@@ -160,15 +186,27 @@ g2 <- ggplot(steps_per_day_rn, aes(x = Steps)) +
   geom_histogram(fill = "blue", boundary=0.1, binwidth=1000) + 
   ylim(0,19) + xlab("steps(NA's replaced by mean/interval)")
 grid.arrange(g1, g2, ncol = 2, top = "Comparison of Histograms: Original vs Imputed NA")
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
 Calculate and report the mean and median total number of steps taken per day
 
-```{r, echo=TRUE, warning=FALSE}
-mean(steps_per_day_rn$Steps, na.rm = TRUE)
 
+```r
+mean(steps_per_day_rn$Steps, na.rm = TRUE)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(steps_per_day_rn$Steps, na.rm = TRUE)
+```
+
+```
+## [1] 10766.19
 ```
 
   <span style="color:Indigo;font-weight:bold">The mean number of total steps per day are 10,766.19 and the median is the same value,  10,766.19.</span>
@@ -188,7 +226,8 @@ For this part the weekdays() function may be of some help here. Use the dataset 
 
 1) Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
-```{r, echo=TRUE, warning=FALSE}
+
+```r
 ## Modifying the date field in activity_replace_nulls to date format
 
 activity_replace_nulls$date <- strptime(activity$date,"%Y-%m-%d")
@@ -198,13 +237,13 @@ activity_replace_nulls$date <- strptime(activity$date,"%Y-%m-%d")
 activity_replace_nulls$weekday_flag <- weekdays(activity_replace_nulls$date)
 
 activity_replace_nulls <- mutate(activity_replace_nulls, weekday_flag = as.factor(ifelse(weekday_flag %in% c("Saturday","Sunday"),"weekend","weekday")))
-
 ```
 
 2) Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, 
 averaged across all weekday days or weekend days (y-axis). 
 
-```{r, echo=TRUE, warning=FALSE}
+
+```r
 ## Creating average by interval and weekday. Only bringing in columns we need (interval, steps and weekday flag)
 
 avg_steps_by_interval_weekday <- activity_replace_nulls[,c(1,3,4)] %>% 
@@ -218,8 +257,9 @@ ggplot(avg_steps_by_interval_weekday, aes(interval, avg_steps)) +
   xlab("Interval") + 
   ylab("Number of Steps") +
   ggtitle("Average Daily Activity Pattern - Steps by Weekday and Weekend")
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
 
   <span style="color:Indigo;font-weight:bold">As demonstrated in the comparison above, there is a marked difference between the activity patterns on weekdays and    weekends. The weekday data has one large, emphasized spike, whereas the weekend data is more level. Presumably, this is a result of
   circumscribed periods of activity during the week (lunch breaks, after work), as opposed to the weekend, when there is more
