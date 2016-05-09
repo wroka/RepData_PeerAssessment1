@@ -200,11 +200,7 @@ grid.arrange(g1, g2, ncol = 2, top = &quot;Comparison of Histograms: Original vs
 <ol style="list-style-type: decimal">
 <li>Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.</li>
 </ol>
-<pre class="r"><code>## Modifying the date field in activity_replace_nulls to date format
-
-activity_replace_nulls$date &lt;- strptime(activity$date,&quot;%Y-%m-%d&quot;)
-
-## Adding &quot;weekday flag&quot;, and then adding logic. Converting field to factor.
+<pre class="r"><code>## Adding &quot;weekday flag&quot;, and then adding logic. Converting field to factor.
 
 activity_replace_nulls$weekday_flag &lt;- weekdays(activity_replace_nulls$date)
 

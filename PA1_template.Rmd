@@ -189,9 +189,6 @@ For this part the weekdays() function may be of some help here. Use the dataset 
 1) Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
 ```{r, echo=TRUE, warning=FALSE}
-## Modifying the date field in activity_replace_nulls to date format
-
-activity_replace_nulls$date <- strptime(activity$date,"%Y-%m-%d")
 
 ## Adding "weekday flag", and then adding logic. Converting field to factor.
 

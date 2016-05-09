@@ -228,10 +228,6 @@ For this part the weekdays() function may be of some help here. Use the dataset 
 
 
 ```r
-## Modifying the date field in activity_replace_nulls to date format
-
-activity_replace_nulls$date <- strptime(activity$date,"%Y-%m-%d")
-
 ## Adding "weekday flag", and then adding logic. Converting field to factor.
 
 activity_replace_nulls$weekday_flag <- weekdays(activity_replace_nulls$date)
